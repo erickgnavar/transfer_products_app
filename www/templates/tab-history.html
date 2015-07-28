@@ -1,0 +1,15 @@
+<ion-view view-title="History">
+    <ion-content>
+        <div class="card" ng-repeat="item in items">
+            <div class="item item-divider">
+                {{ item.product.name  }}
+            </div>
+            <div class="item item-text-wrap">
+                {{ item.origin.name  }} <i class="ion-arrow-right-c"></i> {{ item.destination.name  }}
+            </div>
+            <div class="item item-divider">
+                {{ item.datetime  }}     
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

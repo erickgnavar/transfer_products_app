@@ -1,28 +1,67 @@
-<ion-view view-title="Dashboard">
-  <ion-content class="padding">
-    <div class="list card">
-      <div class="item item-divider">Recent Updates</div>
-      <div class="item item-body">
-        <div>
-          There is a fire in <b>sector 3</b>
+<ion-view view-title="Make a transfer">
+    <ion-content class="padding">
+        <h4 ng-bind="titles[step]"></h4>
+        <div ng-show="step === 0">
+            <div class="list list-inset">
+                <form ng-submit="searchProduct(inputProduct)" name="productForm" novalidate>
+                    <label class="item item-input">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="text" ng-model="inputProduct" name="inputProduct" placeholder="Search product" required="required">
+                    </label>
+                    <br>
+                    <div class="button-bar">
+                        <button type="button" class="button button-stable" ng-click="scan()">
+                            <i class="ion-ios-barcode"></i> Scan barcode
+                        </button>
+                        <button type="submit" class="button button-positive" ng-disabled="productForm.$invalid">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="list">
+                <a class="item item-icon-right" href="#" ng-click="selectProduct(product)" ng-repeat="product in products">
+                    {{ product.name }} <i class="icon ion-checkmark"></i>
+                </a>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="list card">
-      <div class="item item-divider">Health</div>
-      <div class="item item-body">
-        <div>
-          You ate an apple today!
+        <div ng-show="step === 1">
+            <div class="list list-inset">
+                <form ng-submit="searchOrigin(inputOrigin)" name="originForm" novalidate>
+                    <label class="item item-input">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="text" ng-model="inputOrigin" name="inputOrigin" placeholder="Search origin" required="required">
+                    </label>
+                    <br>
+                    <div class="button-bar">
+                        <button type="button" class="button button-stable" ng-click="step = 0">Back</button>
+                        <button type="submit" class="button button-positive" ng-disabled="originForm.$invalid">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="list">
+                <a class="item item-icon-right" href="#" ng-click="selectOrigin(origin)" ng-repeat="origin in origins">
+                    {{ origin.name }} <i class="icon ion-checkmark"></i>
+                </a>
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="list card">
-      <div class="item item-divider">Upcoming</div>
-      <div class="item item-body">
-        <div>
-          You have <b>29</b> meetings on your calendar tomorrow.
+        <div ng-show="step === 2">
+            <div class="list list-inset">
+                <form ng-submit="searchDestination(inputDestination)" name="destinationForm" novalidate>
+                    <label class="item item-input">
+                        <i class="icon ion-search placeholder-icon"></i>
+                        <input type="text" ng-model="inputDestination" name="inputDestination" placeholder="Search destination" required="required">
+                    </label>
+                    <br>
+                    <div class="button-bar">
+                        <button type="button" class="button button-stable" ng-click="step = 1">Back</button>
+                        <button type="submit" class="button button-positive" ng-disabled="destinationForm.$invalid">Search</button>
+                    </div>
+                </form>
+            </div>
+            <div class="list">
+                <a class="item item-icon-right" href="#" ng-click="selectDestination(destination)" ng-repeat="destination in destinations">
+                    {{ destination.name }} <i class="icon ion-checkmark"></i>
+                </a>
+            </div>
         </div>
-      </div>
-    </div>
-  </ion-content>
+    </ion-content>
 </ion-view>

@@ -1,50 +1,77 @@
+'use strict'
+
 angular.module('starter.services', [])
-
-.factory('Chats', function() {
-  // Might use a resource here that returns a JSON array
-
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'https://pbs.twimg.com/profile_images/514549811765211136/9SgAuHeY.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'https://avatars3.githubusercontent.com/u/11214?v=3&s=460'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'https://pbs.twimg.com/profile_images/479090794058379264/84TKj_qa.jpeg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'https://pbs.twimg.com/profile_images/598205061232103424/3j5HUXMY.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'https://pbs.twimg.com/profile_images/578237281384841216/R3ae1n61.png'
-  }];
-
+.factory('$localstorage', ['$window', function($window) {
   return {
-    all: function() {
-      return chats;
+    set: function(key, value) {
+      $window.localStorage[key] = value;
     },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
+    get: function(key, defaultValue) {
+      return $window.localStorage[key] || defaultValue;
     },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
-      }
-      return null;
+    setObject: function(key, value) {
+      $window.localStorage[key] = JSON.stringify(value);
+    },
+    getObject: function(key) {
+      return JSON.parse($window.localStorage[key] || '{}');
+    }
+  }
+}])
+.factory('AuthFactory', ['$http', function ($http) {
+  return {
+    login: function (api, host, database, username, password) {
+      return $http.post(api + '/auth/login', {
+        host: host,
+        database: database,
+        email: username,
+        password: password
+      });
     }
   };
-});
+}])
+.factory('myInterceptor', ['$q', '$localstorage', function ($q, $localstorage) {
+  var settings = $localstorage.getObject('settings', {});
+  return {
+    request: function (config) {
+      if (config.url.replace(settings.api, '').substring(0, 5) === '/api/') {
+        config.headers['access-control-allow-origin'] = '*';
+        if (typeof settings.api === 'undefined' || typeof settings.credentials === 'undefined') {
+          return $q.reject('settings incomplete');
+        }
+        config.headers['credentials'] = settings.credentials;
+      }
+      return config;
+    }
+  };
+}])
+.factory('ProductFactory', ['$http', '$localstorage', function ($http, $localstorage) {
+  var host = $localstorage.getObject('settings', {}).api;
+  return {
+    search: function (q) {
+      return $http.get(host + '/api/products/?q=' + q);
+    }
+  }
+}])
+.factory('LocationFactory', ['$http', '$localstorage', function ($http, $localstorage) {
+  var host = $localstorage.getObject('settings', {}).api;
+  return {
+    search: function (q) {
+      return $http.get(host + '/api/locations/?q=' + q);
+    },
+    transfer: function (item) {
+      return $http.post(host + '/api/locations/transfer/', {
+        'product_id': item.product.id,
+        'origin_id': item.origin.id,
+        'destination_id': item.destination.id
+      });
+    }
+  }
+}])
+.factory('HistoryFactory', ['$http', '$localstorage', function ($http, $localstorage) {
+  var host = $localstorage.getObject('settings', {}).api;
+  return {
+    all: function() {
+      return $http.get(host + '/api/history/');
+    }
+  };
+}]);
