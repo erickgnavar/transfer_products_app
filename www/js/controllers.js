@@ -29,14 +29,15 @@ angular.module('starter.controllers', [])
       ProductFactory.searchByCode(data.text).then(function (response) {
         if (response.data.length) {
           self.scannedProduct = response.data[0];
+        } else {
+          $ionicPopup.alert({
+            title: 'Error',
+            template: 'Product not found'
+          });
         }
       }, function (error) {
-        $ionicPopup.alert({
-          title: 'Error',
-          template: 'Product not found'
-        });
+        console.error(error);
       });
-      var code = data.text;
     }, function (error) {
       console.error(error);
     });
