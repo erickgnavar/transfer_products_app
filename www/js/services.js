@@ -47,6 +47,9 @@ angular.module('starter.services', [])
 .factory('ProductFactory', ['$http', '$localstorage', function ($http, $localstorage) {
   var host = $localstorage.getObject('settings', {}).api;
   return {
+    searchByCode: function (code) {
+      return $http.get(host + '/api/products/?code=' + code);
+    },
     search: function (q) {
       return $http.get(host + '/api/products/?q=' + q);
     }

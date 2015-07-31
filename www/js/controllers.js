@@ -8,7 +8,9 @@ angular.module('starter.controllers', [])
   });
 
   self.step = 0;
+  self.mode = 'scan';
   self.titles = ['Select product', 'Select origin', 'Select destination'];
+  self.scannedProduct = {};
 
   self.clean = function () {
     self.step = 0;
@@ -19,15 +21,38 @@ angular.module('starter.controllers', [])
     self.inputProduct = '';
     self.inputOrigin = '';
     self.inputDestination = '';
+    self.scannedProduct = {};
   };
 
   self.scan = function () {
     $cordovaBarcodeScanner.scan().then(function (data) {
-      console.log(data);
+      ProductFactory.searchByCode(data.text).then(function (response) {
+        if (response.data.length) {
+          self.scannedProduct = response.data[0];
+        }
+      }, function (error) {
+        $ionicPopup.alert({
+          title: 'Error',
+          template: 'Product not found'
+        });
+      });
+      var code = data.text;
     }, function (error) {
       console.error(error);
     });
   }
+
+  self.goStep2 = function () {
+    if (typeof self.scannedProduct.id !== 'undefined') {
+      self.step = 1;
+      self.selected.product = self.scannedProduct;
+    } else {
+      $ionicPopup.alert({
+        title: 'Error',
+        template: 'Select product before continue'
+      });
+    }
+  };
 
   self.searchProduct = function (inputProduct) {
     ProductFactory.search(inputProduct).then(function (response) {

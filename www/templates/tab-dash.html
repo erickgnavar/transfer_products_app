@@ -1,8 +1,28 @@
 <ion-view view-title="Make a transfer">
     <ion-content class="padding">
         <h4 ng-bind="titles[step]"></h4>
+        <br>
         <div ng-show="step === 0">
-            <div class="list list-inset">
+            <div class="button-bar">
+                <button type="button" class="button" ng-class="{'button-positive': mode === 'scan'}" ng-click="mode = 'scan'">
+                    <i class="ion-ios-barcode"></i> Scan
+                </button>
+                <button type="button" class="button" ng-class="{'button-positive': mode === 'search'}" ng-click="mode = 'search'">
+                    <i class="ion-ios-search"></i> Search
+                </button>
+            </div>
+            <div class="list" ng-show="mode === 'scan'">
+                <br>
+                <div class="button-bar">
+                    <button type="button" class="button" ng-click="scan()">
+                        <i class="ion-ios-barcode"></i> Scan
+                    </button>
+                    <button type="button" class="button" ng-click="goStep2()">Next</button>
+                </div>
+                <br>
+                <p ng-bind="scannedProduct.name"></p>
+            </div>
+            <div class="list list-inset" ng-show="mode === 'search'">
                 <form ng-submit="searchProduct(inputProduct)" name="productForm" novalidate>
                     <label class="item item-input">
                         <i class="icon ion-search placeholder-icon"></i>
@@ -10,17 +30,14 @@
                     </label>
                     <br>
                     <div class="button-bar">
-                        <button type="button" class="button button-stable" ng-click="scan()">
-                            <i class="ion-ios-barcode"></i> Scan barcode
-                        </button>
                         <button type="submit" class="button button-positive" ng-disabled="productForm.$invalid">Search</button>
                     </div>
                 </form>
-            </div>
-            <div class="list">
-                <a class="item item-icon-right" href="#" ng-click="selectProduct(product)" ng-repeat="product in products">
-                    {{ product.name }} <i class="icon ion-checkmark"></i>
-                </a>
+                <div class="list">
+                    <a class="item item-icon-right" href="#" ng-click="selectProduct(product)" ng-repeat="product in products">
+                        {{ product.name }} <i class="icon ion-checkmark"></i>
+                    </a>
+                </div>
             </div>
         </div>
         <div ng-show="step === 1">
